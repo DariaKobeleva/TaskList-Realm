@@ -83,7 +83,7 @@ final class StorageManager {
             task.note = note
         }
     }
-
+    
     func done(_ task: Task) {
         write {
             task.isComplete.toggle()
