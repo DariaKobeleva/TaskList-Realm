@@ -51,7 +51,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="vy2-F0-6yi" kind="show" trigger="accessoryAction" id="Jna-0Q-I50"/>
+                                    <segue destination="vy2-F0-6yi" kind="show" id="30a-b3-LeI"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -66,10 +66,10 @@
             </objects>
             <point key="canvasLocation" x="-310" y="170"/>
         </scene>
-        <!--Task List View Controller-->
+        <!--Tasks View Controller-->
         <scene sceneID="60t-tS-ukk">
             <objects>
-                <tableViewController id="vy2-F0-6yi" customClass="TaskListViewController" customModule="TaskList_Realm" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="vy2-F0-6yi" customClass="TasksViewController" customModule="TaskList_Realm" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="TSb-kd-cU5">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

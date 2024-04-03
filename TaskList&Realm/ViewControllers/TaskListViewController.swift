@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import RealmSwift
 
-class TaskListViewController: UITableViewController {
+final class TaskListViewController: UITableViewController {
+    //Объект Results позволяет работать с данными в реальном времени
     
-    private var taskLists: [TaskList]!
+    private var taskLists: Results<TaskList>!
     private let storageManager = StorageManager.shared
     private let dataManager = DataManager.shared
     
@@ -22,15 +24,19 @@ class TaskListViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         
-        taskLists = storageManager.fetchTaskList()
+        taskLists = storageManager.fetchData(TaskList.self)
         createTempData()
     }
     
-    // MARK: - UITableViewDataSource
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        taskLists.count
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
     }
     
+    // MARK: - UITableViewDataSource
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        taskLists.count
+    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
@@ -44,38 +50,39 @@ class TaskListViewController: UITableViewController {
     }
     
     // MARK: - UITableViewDelegate
-    
     //Набор для пользовательских действий по свайпу (справа налево)
     //Слева направо - leadingSwipeActionsConfigurationForRowAt
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) ->
-    UISwipeActionsConfiguration? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let taskList = taskLists[indexPath.row]
         
         let deleteAction = UIContextualAction(
             style: .destructive,
-            title: "Delete") { [unowned self] _, _, _ in
-                storageManager.delete(taskList)
-                tableView.reloadRows(at: [indexPath], with: .automatic)
-            }
+            title: "Delete"
+        ) { [unowned self] _, _, _ in
+            storageManager.delete(taskList)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
         
         let editAction = UIContextualAction(
             style: .normal,
-            title: "Edit") { [unowned self] _, _, isDone in
-                showAlert(with: taskList) {
-                    tableView.reloadRows(at: [indexPath], with: .automatic)
-                }
-                isDone(true)
+            title: "Edit")
+        { [unowned self] _, _, isDone in
+            showAlert(with: taskList) {
+                tableView.reloadRows(at: [indexPath], with: .automatic)
             }
+            isDone(true)
+        }
         
         let doneAction = UIContextualAction(
             style: .normal,
-            title: "DOne") { [unowned self] _, _, isDone in
+            title: "Done") { [unowned self] _, _, isDone in
                 storageManager.done(taskList)
                 tableView.reloadRows(at: [indexPath], with: .automatic)
+                isDone(true)
             }
         
         editAction.backgroundColor = .systemOrange
-        doneAction.backgroundColor = .green
+        doneAction.backgroundColor = .systemGreen
         
         return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
     }
@@ -83,10 +90,11 @@ class TaskListViewController: UITableViewController {
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
-        guard let taskVC = segue.destination as? TasksViewController else { return }
+        guard let tasksVC = segue.destination as? TasksViewController else { return }
         let taskList = taskLists[indexPath.row]
-        taskVC.taskList = taskList
+        tasksVC.taskList = taskList
     }
+    
     
     @IBAction func sortingList(_ sender: UISegmentedControl) {
     }
@@ -122,8 +130,12 @@ extension TaskListViewController {
     }
     
     private func createTaskList(withTitle title: String) {
-       
+        storageManager.save(title) { taskList in
+            let rowIndex = IndexPath(row: taskLists.index(of: taskList) ?? 0, section: 0)
+            tableView.insertRows(at: [rowIndex], with: .automatic)
+        }
     }
+    
     private func createTempData() {
         if !UserDefaults.standard.bool(forKey: "done") {
             dataManager.createTempData { [unowned self] in
