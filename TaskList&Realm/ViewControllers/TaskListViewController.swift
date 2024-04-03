@@ -11,10 +11,12 @@ import RealmSwift
 final class TaskListViewController: UITableViewController {
     //Объект Results позволяет работать с данными в реальном времени
     
+    // MARK: - Private Properties
     private var taskLists: Results<TaskList>!
     private let storageManager = StorageManager.shared
     private let dataManager = DataManager.shared
     
+    // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
@@ -88,16 +90,37 @@ final class TaskListViewController: UITableViewController {
         tasksVC.taskList = taskList
     }
     
-    
+    //MARK: - IB Actions
     @IBAction func sortingList(_ sender: UISegmentedControl) {
-        taskLists = sender.selectedSegmentIndex == 0
-               ? taskLists.sorted(byKeyPath: "date")
-               : taskLists.sorted(byKeyPath: "title")
-               tableView.reloadData()
+        switch sender.selectedSegmentIndex {
+        case 0:
+            taskLists = taskLists.sorted(byKeyPath: "date")
+        default:
+            taskLists = taskLists.sorted(byKeyPath: "title")
+        }
+        
+        tableView.reloadData()
     }
     
+    //MARK: - Private Methods
     @objc private func addButtonPressed() {
         showAlert()
+    }
+    
+    private func createTaskList(withTitle title: String) {
+        storageManager.save(title) { taskList in
+            let rowIndex = IndexPath(row: taskLists.index(of: taskList) ?? 0, section: 0)
+            tableView.insertRows(at: [rowIndex], with: .automatic)
+        }
+    }
+    
+    private func createTempData() {
+        if !UserDefaults.standard.bool(forKey: "done") {
+            dataManager.createTempData { [unowned self] in
+                UserDefaults.standard.setValue(true, forKey: "done")
+                tableView.reloadData()
+            }
+        }
     }
 }
 
@@ -124,21 +147,5 @@ extension TaskListViewController {
         
         let alertController = alertBuilder.build()
         present(alertController, animated: true)
-    }
-    
-    private func createTaskList(withTitle title: String) {
-        storageManager.save(title) { taskList in
-            let rowIndex = IndexPath(row: taskLists.index(of: taskList) ?? 0, section: 0)
-            tableView.insertRows(at: [rowIndex], with: .automatic)
-        }
-    }
-    
-    private func createTempData() {
-        if !UserDefaults.standard.bool(forKey: "done") {
-            dataManager.createTempData { [unowned self] in
-                UserDefaults.standard.setValue(true, forKey: "done")
-                tableView.reloadData()
-            }
-        }
     }
 }

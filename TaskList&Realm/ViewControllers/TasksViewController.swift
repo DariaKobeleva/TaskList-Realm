@@ -73,8 +73,6 @@ final class TasksViewController: UITableViewController {
         taskList.tasks.insert(task, at: destinationIndexPath.row)
     }
     
-  
-    
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let task = indexPath.section == 0
@@ -114,6 +112,7 @@ final class TasksViewController: UITableViewController {
         return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
     }
     
+    //MARK: - Private Methods
     private func createTask(withTitle title: String, andNote note: String) {
         storageManager.save(title, withNote: note, to: taskList) { task in
             let rowIndex = IndexPath(row: currentTasks.index(of: task) ?? 0, section: 0)
@@ -125,7 +124,7 @@ final class TasksViewController: UITableViewController {
         showAlert()
     }
 }
-
+// MARK: - AlertController
 extension TasksViewController {
     private func showAlert(with task: Task? = nil, completion: (() -> Void)? = nil) {
         let alertBuilder = AlertControllerBuilder(
