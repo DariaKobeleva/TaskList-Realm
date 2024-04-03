@@ -43,6 +43,7 @@ final class TaskListViewController: UITableViewController {
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
         content.text = taskList.title
+        
         content.secondaryText = taskList.tasks.count.formatted()
         cell.contentConfiguration = content
         
@@ -55,31 +56,23 @@ final class TaskListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let taskList = taskLists[indexPath.row]
         
-        let deleteAction = UIContextualAction(
-            style: .destructive,
-            title: "Delete"
-        ) { [unowned self] _, _, _ in
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [unowned self] _, _, _ in
             storageManager.delete(taskList)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
-        let editAction = UIContextualAction(
-            style: .normal,
-            title: "Edit")
-        { [unowned self] _, _, isDone in
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
             showAlert(with: taskList) {
                 tableView.reloadRows(at: [indexPath], with: .automatic)
             }
             isDone(true)
         }
         
-        let doneAction = UIContextualAction(
-            style: .normal,
-            title: "Done") { [unowned self] _, _, isDone in
-                storageManager.done(taskList)
-                tableView.reloadRows(at: [indexPath], with: .automatic)
-                isDone(true)
-            }
+        let doneAction = UIContextualAction(style: .normal, title: "Done") { [unowned self] _, _, isDone in
+            storageManager.done(taskList)
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+            isDone(true)
+        }
         
         editAction.backgroundColor = .systemOrange
         doneAction.backgroundColor = .systemGreen
