@@ -111,8 +111,8 @@
 		207A954C2BBC32EC003AE85E /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				207A95472BBC328C003AE85E /* TasksViewController.swift */,
 				207A95452BBC3278003AE85E /* TaskListViewController.swift */,
+				207A95472BBC328C003AE85E /* TasksViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
