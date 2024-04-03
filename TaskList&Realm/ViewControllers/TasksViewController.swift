@@ -60,19 +60,6 @@ final class TasksViewController: UITableViewController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        true
-    }
-    
-    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let task = destinationIndexPath.section == 0
-        ? currentTasks[destinationIndexPath.row]
-        : completedTasks[destinationIndexPath.row]
-        
-        taskList.tasks.remove(at: sourceIndexPath.row)
-        taskList.tasks.insert(task, at: destinationIndexPath.row)
-    }
-    
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let task = indexPath.section == 0

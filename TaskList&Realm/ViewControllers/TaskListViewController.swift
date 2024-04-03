@@ -11,7 +11,7 @@ import RealmSwift
 final class TaskListViewController: UITableViewController {
     //Объект Results позволяет работать с данными в реальном времени
     
-    // MARK: - Private Properties
+    // MARK: - Private Propertie
     private var taskLists: Results<TaskList>!
     private let storageManager = StorageManager.shared
     private let dataManager = DataManager.shared
@@ -27,6 +27,7 @@ final class TaskListViewController: UITableViewController {
         )
         
         taskLists = storageManager.fetchData(TaskList.self)
+        
         createTempData()
     }
     
@@ -44,9 +45,17 @@ final class TaskListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
+        let currentTasks = taskList.tasks.filter("isComplete = false")
+        let completedTasks = taskList.tasks.filter("isComplete = true")
+
         content.text = taskList.title
         
-        content.secondaryText = taskList.tasks.count.formatted()
+        content.secondaryText = currentTasks.isEmpty
+        ? (completedTasks.isEmpty 
+           ? "0"
+           : "✓")
+        : currentTasks.count.formatted()
+        
         cell.contentConfiguration = content
         
         return cell
