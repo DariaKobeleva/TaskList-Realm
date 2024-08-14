@@ -5,7 +5,7 @@ The app uses the Realm database for persistent storage, allowing users to create
 
 ## Demo
 
-<img src="https://github.com/user-attachments/assets/7338ac8b-27ec-4c85-b800-8e6f1878040d" width="200"/>
+<img src="https://github.com/user-attachments/assets/f7c54017-bd23-4397-83c5-4b8c1f754c66" width="200"/>
 
 ## Features
 
